@@ -1,0 +1,101 @@
+---
+title: "ESM 206 HW3 Task 3"
+author: "Sarah Hamilton"
+date: "10/23/2021"
+output: html_document
+---
+
+# Santa Barbara Urchins
+
+This code analyzes sea urchin data.
+
+Data Source: Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
+### Set up 
+
+Hide warnings and messages, show code.
+Read in necessary packages.
+
+```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+
+```
+
+### Read in the data
+
+Read in the data using read_csv() and here().
+
+```{r}
+urchins_raw <- read_csv(here("data","urchins.csv"))
+
+# Convert the column names to lower snake case using clean_names()
+
+urchins <- clean_names(urchins_raw)
+```
+
+# Section 1: Size comparisons
+
+Size comparisons for purple and red urchins.
+
+### Data Visualization
+
+Compare the size distribution of purple and red urchins using a histogram. 
+Use 10-15 bins. 
+Add a figure caption. 
+
+```{r}
+ggplot(data = urchins, aes(x = size)) + #plot based on size
+  geom_histogram(bins = 12, aes(fill = common_name)) + #create a histogram with color based on common_name
+  theme_bw() + #add a bw theme
+  facet_wrap(~common_name) + #sort into two graphs by common_name()
+  labs(x = "Size (cm)", 
+       y = "Count", title = "Size Distribution of Purple and Red Urchins", 
+       fill="Legend",
+       caption = "Figure 1. Size distributions of purple and red urchins. The size distribution for purple urchins \n is shown on the left and the size distribution for red urchins is shown on the right.") + #add labels
+  scale_fill_manual(values = c("purple","red")) #change colors to coordinate with type of urchin
+  
+```
+
+### Descriptive Statistics Table
+
+Create a finalized summary table that contains the mean, standard deviation,
+and sample size for purple and red urchins.
+
+```{r}
+sum_table <- urchins %>%
+  group_by(common_name) %>%
+  summarize(mean_size = mean(size),
+            median_size = median(size),
+            std_dev_size = sd(size),
+            sample_size = n()
+            )
+
+final_table <- sum_table %>%
+  kable(caption = "Table 1: Summary Statistics for Data on Sea Urchins.",
+        digits = c(2,2,2,2),
+        col.names = c("Color",
+                      "Mean Size (cm)", 
+                      "Median Size (cm)", 
+                      "Standard Deviation Size (cm)",
+                      "Sample Size")) %>%
+  kable_styling(full_width = FALSE)
+
+final_table
+```
+
+
+### Analysis of Results
+
+Briefly describe the differences in the summary statistics for the 2 different types of urchins.
+
+Red urchins are about 2.3 cm bigger than the purple urchins on average, and the red
+urchins have a standard deviation that is about 0.7 cm greater than that of the purple urchins.
+
+
+
+
