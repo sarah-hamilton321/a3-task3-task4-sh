@@ -23,6 +23,7 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(kableExtra)
+library(lubridate)
 
 ```
 
@@ -91,13 +92,70 @@ final_table
 
 ### Analysis of Results
 
-Briefly describe the differences in the summary statistics for the 2 different types of urchins.
+Brief description of the differences in the summary statistics for the 2 different types of urchins.
 
 Red urchins are about 2.3 cm (or about 50%) bigger than the purple urchins on average, and the red
 urchins have a standard deviation that is about 0.7 cm (or about 60%) greater than that 
 of the purple urchins. These statistics along with the shape of the two graphs indicate 
 that purple sea urchins tend to be both smaller and slightly more uniform in size than 
 red sea urchins. 
+
+# Section 2: Purple Urchin Counts by Site and Year
+
+Create a subset of urchins data. 
+
+```{r}
+purple_urchins <- urchins %>%
+  filter(common_name == "Purple Urchin") %>% #filter for purple urchins
+  mutate(date_new = mdy(date)) %>% #make a new data column of class date
+  mutate(year_new = year(date_new)) %>% #make a year column
+  mutate(site_full = case_when( #make a new column with full names 
+    site == "NAPL"~ "Naples Reef",
+    site == "AQUE" ~ "Arroyo Quemado Reef",
+    site == "CARP" ~ "Carpinteria Reef",
+    site == "MOHK" ~ "Mohawk Reef",
+    site == "IVEE" ~ "Isla Vista Reef"
+  ))
+
+```
+
+Store a table containing total number of purple urchins observed by site and year.
+
+```{r}
+purple_site_year <- purple_urchins %>%
+  group_by(site_full, year_new) %>%
+  summarize(count_urchins = n())
+
+purple_site_year
+```
+
+Make a graph of counts of purple urchins by site over time.
+
+```{r}
+ggplot(data = purple_site_year, aes(x = year_new, y = count_urchins)) +
+  geom_col(aes(fill = site_full)) +
+  facet_wrap(~site_full) +
+  theme_minimal() +
+  labs(x = "Year", y = "Number of Urchins", title = "Purple Urchin Population Over Time",
+       fill = "Site",
+       caption = "Figure 2. Purple Sea Urchin Populations Over Time at 5 Sites in Santa Barbara")
+```
+
+Brief analysis of graph:
+
+I think this graph indicates that there is a decrease in the purple sea urchin
+population along the Santa Barbara coast, because at each site the count
+of sea urchins seems to have decreased significantly since the early 2010s.
+However, to determine whether the counts reflect actual changes in population,
+we would need to know ??????
+
+ADD MORE TEXT HERE BEFORE SUMBITTING?????
+Question from assignment:
+"What would you have to take into account to determine whether the changes 
+in counts by year are reflective of actual changes in urchin population? What 
+else could explain the changes in number of purple urchins observed?"
+
+
 
 
 
