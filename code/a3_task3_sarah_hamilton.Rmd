@@ -78,7 +78,7 @@ sum_table <- urchins %>%
 final_table <- sum_table %>%
   kable(caption = "Table 1: Summary Statistics for Data on Sea Urchins.",
         digits = c(2,2,2,2),
-        col.names = c("Color",
+        col.names = c("Color of Urchin",
                       "Mean Size (cm)", 
                       "Median Size (cm)", 
                       "Standard Deviation Size (cm)",
@@ -93,8 +93,11 @@ final_table
 
 Briefly describe the differences in the summary statistics for the 2 different types of urchins.
 
-Red urchins are about 2.3 cm bigger than the purple urchins on average, and the red
-urchins have a standard deviation that is about 0.7 cm greater than that of the purple urchins.
+Red urchins are about 2.3 cm (or about 50%) bigger than the purple urchins on average, and the red
+urchins have a standard deviation that is about 0.7 cm (or about 60%) greater than that 
+of the purple urchins. These statistics along with the shape of the two graphs indicate 
+that purple sea urchins tend to be both smaller and slightly more uniform in size than 
+red sea urchins. 
 
 
 
