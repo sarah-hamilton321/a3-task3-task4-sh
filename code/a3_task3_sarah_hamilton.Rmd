@@ -123,8 +123,8 @@ Store a table containing total number of purple urchins observed by site and yea
 
 ```{r}
 purple_site_year <- purple_urchins %>%
-  group_by(site_full, year_new) %>%
-  summarize(count_urchins = n())
+  group_by(site_full, year_new) %>% #gropu the data by site and year
+  summarize(count_urchins = n()) #total the number of urchins at each site in each year
 
 purple_site_year
 ```
@@ -132,9 +132,9 @@ purple_site_year
 Make a graph of counts of purple urchins by site over time.
 
 ```{r}
-ggplot(data = purple_site_year, aes(x = year_new, y = count_urchins)) +
-  geom_col(aes(fill = site_full)) +
-  facet_wrap(~site_full) +
+ggplot(data = purple_site_year, aes(x = year_new, y = count_urchins)) + #plot the counts over time for each site
+  geom_col(aes(fill = site_full)) + #column graph 
+  facet_wrap(~site_full) + #facet wrap to split up the graphs by site
   theme_minimal() +
   labs(x = "Year", y = "Number of Urchins", title = "Purple Urchin Population Over Time",
        fill = "Site",

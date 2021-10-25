@@ -1,0 +1,109 @@
+---
+title: "ESM 206 HW 3 Task 4"
+author: "Sarah Hamilton"
+date: "10/24/2021"
+output: html_document
+---
+
+# Task 4: Naples Reef Purple Urchins
+
+This code contains an explatory data analysis of purple urchins.
+
+Data Source: Data Source: Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
+### Set up
+
+Read in the necessary packages. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+library(lubridate)
+
+```
+
+### Read in the data
+
+Read in the data using read_csv() and here().
+
+```{r}
+urchins_raw <- read_csv(here("data","urchins.csv"))
+
+# Convert the column names to lower snake case using clean_names()
+
+urchins <- clean_names(urchins_raw)
+```
+
+
+### Wrangle the data
+
+Organize the data and make exploratory histograms and QQ plots to analyze the 
+size distributions of the annual and control groups of purple urchins. 
+
+```{r}
+urchin_subset <- urchins %>% 
+  filter(common_name == "Purple Urchin") %>% #filter for purple urchins
+  filter(site == "NAPL") %>% #filter for NAPL site
+  mutate(date_new = mdy(date)) %>% #make a new data column of class date
+  mutate(year_new = year(date_new)) %>% #make a new column for year
+  filter(year_new == 2010)
+  
+```
+
+```{r}
+#Make an exploratory histogram
+
+ggplot(data = urchin_subset, aes(x = size)) + #make a histogram
+  geom_histogram(aes(fill=treatment)) + #color it by treatment group
+  facet_wrap(~treatment) + #separate by treatment group
+  labs(x = "Size (cm)", y = "Number of Urchins", 
+      title = "Purple Urchin Size Distribution by Control Group") + #add labels
+  theme_bw() #add theme
+```
+
+
+```{r}
+#Make an exploratory QQ plot 
+
+ggplot(data = urchin_subset) + #make a qqplot 
+  geom_qq(aes(sample = size, color = treatment)) + #compare size and color by treatment
+  theme_bw() + #add a theme
+  facet_wrap(~treatment) + #facet by treatment
+  labs(x = "Normal Distribution", y = "Urchin Size", fill = "Treatment Group",
+      title = "Purple Urchin Size Distribution by Control Group") 
+
+```
+
+### Analysis of graphs
+
+DO THISSSSS: add 1 - 2 sentences describing your main takeaways about the distribution of purple urchin sizes for each treatment (distribution, comparison, patterns, etc.). 
+
+### Create a summary statistics table
+
+```{r}
+summary_table <- urchin_subset %>%
+  group_by(treatment) %>%
+  summarize(mean_size = mean(size),
+            med_size = median(size),
+            sd_size = sd(size),
+            sample_size = n())
+
+final_summary_table <- summary_table %>%
+  kable(caption = "Table 1: Summary Statistics for Data on Purple Urchins, separated by Treatment Group",
+        digits = c(2,2,2,2),
+        col.names = c("Treatment Group",
+                      "Mean Size (cm)",
+                      "Median Size (cm)",
+                      "Standard Deviation Size (cm)",
+                      "Sample Size")) %>%
+  kable_styling(full_width = FALSE)
+
+final_summary_table
+```
+
+
+
