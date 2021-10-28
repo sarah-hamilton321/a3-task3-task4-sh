@@ -7,16 +7,18 @@ output: html_document
 
 # Task 4: Naples Reef Purple Urchins
 
-This code contains an explatory data analysis of purple urchins.
+This code contains an exploratory data analysis of purple urchins. It compares
+purple urchin size between the kelp removal sites and the no kelp removal sections
+of the Naples Reef in 2010.
 
 Data Source: Data Source: Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
 ### Set up
 
-Read in the necessary packages. 
+Read in the necessary packages. Hide messages and warnings. 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
 library(here)
@@ -28,7 +30,7 @@ library(lubridate)
 
 ### Read in the data
 
-Read in the data using read_csv() and here().
+Read in the data using read_csv() and here(). Clean the column names.
 
 ```{r}
 urchins_raw <- read_csv(here("data","urchins.csv"))
@@ -80,29 +82,34 @@ ggplot(data = urchin_subset) + #make a qqplot
 
 ### Analysis of graphs
 
-DO THISSSSS: add 1 - 2 sentences describing your main takeaways about the distribution of purple urchin sizes for each treatment (distribution, comparison, patterns, etc.). 
+The annual and control groups for purple urchins seem to have relatively similar
+size distributions. They both appear to center around 3-5 cm and both appear
+to have ranges of about 2-7 cm. Additionally, they both appear to be relatively
+normal, as both QQ plots appear to be mostly linear. 
 
 ### Create a summary statistics table
 
 ```{r}
-summary_table <- urchin_subset %>%
-  group_by(treatment) %>%
-  summarize(mean_size = mean(size),
-            med_size = median(size),
-            sd_size = sd(size),
-            sample_size = n())
+#create summary table by grouping by treatment group and summarizing some statistics
+summary_table <- urchin_subset %>% 
+  group_by(treatment) %>% #group by treatment
+  summarize(mean_size = mean(size), #calculate mean
+            med_size = median(size), #calculate median
+            sd_size = sd(size), #calculate standard deviation
+            sample_size = n()) #calculate sample size
 
+#format summary table nicely using kable
 final_summary_table <- summary_table %>%
-  kable(caption = "Table 1: Summary Statistics for Data on Purple Urchins, separated by Treatment Group",
-        digits = c(2,2,2,2),
-        col.names = c("Treatment Group",
+  kable(caption = "Table 1: Summary Statistics for Data on Purple Urchins, separated by Treatment Group", #add caption
+        digits = c(2,2,2,2), #reduce table to contain 2 decimal places
+        col.names = c("Treatment Group", #add column names
                       "Mean Size (cm)",
                       "Median Size (cm)",
                       "Standard Deviation Size (cm)",
                       "Sample Size")) %>%
   kable_styling(full_width = FALSE)
 
-final_summary_table
+final_summary_table #output the final summary table
 ```
 
 

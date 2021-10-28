@@ -7,16 +7,17 @@ output: html_document
 
 # Santa Barbara Urchins
 
-This code analyzes sea urchin data.
+This code analyzes sea urchin data by comparing the sizes of red and purple
+urchins and by visualizing purple urchin populations over time at various sites.
 
 Data Source: Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
 
 ### Set up 
 
 Hide warnings and messages, show code.
-Read in necessary packages.
+Read in necessary packages. Hide messages and warnings. 
 
-```{r setup, include=FALSE, message = FALSE, warning = FALSE}
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
@@ -29,7 +30,7 @@ library(lubridate)
 
 ### Read in the data
 
-Read in the data using read_csv() and here().
+Read in the data using read_csv() and here(). Clean the column names.
 
 ```{r}
 urchins_raw <- read_csv(here("data","urchins.csv"))
@@ -69,17 +70,17 @@ and sample size for purple and red urchins.
 
 ```{r}
 sum_table <- urchins %>%
-  group_by(common_name) %>%
-  summarize(mean_size = mean(size),
-            median_size = median(size),
-            std_dev_size = sd(size),
-            sample_size = n()
+  group_by(common_name) %>% #group by common name
+  summarize(mean_size = mean(size), #calculate mean
+            median_size = median(size), #calculate median
+            std_dev_size = sd(size), #calculate standard deviation
+            sample_size = n() #calculate sample size
             )
 
 final_table <- sum_table %>%
-  kable(caption = "Table 1: Summary Statistics for Data on Sea Urchins.",
-        digits = c(2,2,2,2),
-        col.names = c("Color of Urchin",
+  kable(caption = "Table 1: Summary Statistics for Data on Sea Urchins.", #add table caption
+        digits = c(2,2,2,2), #display two decimals in the table
+        col.names = c("Color of Urchin", #format the column names
                       "Mean Size (cm)", 
                       "Median Size (cm)", 
                       "Standard Deviation Size (cm)",
@@ -92,7 +93,7 @@ final_table
 
 ### Analysis of Results
 
-Brief description of the differences in the summary statistics for the 2 different types of urchins.
+Brief description of the differences in the summary statistics for the 2 different types of urchins:
 
 Red urchins are about 2.3 cm (or about 50%) bigger than the purple urchins on average, and the red
 urchins have a standard deviation that is about 0.7 cm (or about 60%) greater than that 
@@ -143,17 +144,17 @@ ggplot(data = purple_site_year, aes(x = year_new, y = count_urchins)) + #plot th
 
 Brief analysis of graph:
 
-I think this graph indicates that there is a decrease in the purple sea urchin
+This graph seems to indicate that there is a decrease in the purple sea urchin
 population along the Santa Barbara coast, because at each site the count
 of sea urchins seems to have decreased significantly since the early 2010s.
 However, to determine whether the counts reflect actual changes in population,
-we would need to know ??????
-
-ADD MORE TEXT HERE BEFORE SUMBITTING?????
-Question from assignment:
-"What would you have to take into account to determine whether the changes 
-in counts by year are reflective of actual changes in urchin population? What 
-else could explain the changes in number of purple urchins observed?"
+we would need to know whether the sea urchins were simply moving away from these
+sites to other sites along the coast or whether they are dying as a result of
+kelp removal. The only way to know this would be to survey many other sites to
+have more data or to know the whole population, both of which are very hard or 
+impossible to do. Therefore, while this data indicates lower urchin populations
+at these specific sites, we cannot say definitively what is happening to these
+urchins.
 
 
 
